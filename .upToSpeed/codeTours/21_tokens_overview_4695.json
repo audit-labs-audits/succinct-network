@@ -1,0 +1,155 @@
+{
+  "title": "2.1: Tokens: Overview",
+  "id": "MDqrMfTTnmDjiffr7vBlLIlcTZw/bXWGARe8qqyKCGM=",
+  "originalId": 4695,
+  "position": 2,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "Welcome to a tour of the four token contracts in the `succinct-network` codebase. This tour will provide a high-level overview of each token, its file location, and its basic role in the system.",
+      "title": "",
+      "id": "55877"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/src/tokens/Succinct.sol"
+      ],
+      "description": "Our first stop is `Succinct.sol`. This file defines the `Succinct` contract, which is the base ERC20 token for the Succinct Prover Network, known as **$PROVE**. It's a mintable token, with the `mint` function restricted to the contract owner.",
+      "title": "",
+      "id": "55878"
+    },
+    {
+      "type": "highlight",
+      "description": "Here's the contract definition. Notice the name `Succinct` and symbol `PROVE`.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 19
+        }
+      ],
+      "title": "",
+      "id": "55879"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/src/tokens/IntermediateSuccinct.sol"
+      ],
+      "description": "Next, we'll look at `IntermediateSuccinct.sol`. This contract introduces the **$iPROVE** token. It's the first wrapper layer over the base **$PROVE** token.",
+      "title": "",
+      "id": "55880"
+    },
+    {
+      "type": "highlight",
+      "description": "`$iPROVE` is an **ERC-4626** vault, which means it takes `$PROVE` as a deposit and issues `$iPROVE` shares in return. This is a common pattern for yield-bearing tokens.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 27,
+          "end": 27
+        }
+      ],
+      "title": "",
+      "id": "55881"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/src/tokens/SuccinctProver.sol"
+      ],
+      "description": "Our third token is defined in `SuccinctProver.sol`. This contract represents a prover-specific delegation token, `$PROVER-N`.",
+      "title": "",
+      "id": "55882"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the second wrapper layer. The `SuccinctProver` contract is another `ERC-4626` vault, but this time it wraps `$iPROVE` to create these prover-specific tokens. Each prover in the network will have its own `$PROVER-N` token contract.",
+      "file": "contracts/src/tokens/SuccinctProver.sol",
+      "highlight": [
+        {
+          "start": 23,
+          "end": 23
+        }
+      ],
+      "title": "",
+      "id": "55883"
+    },
+    {
+      "type": "highlight",
+      "description": "As you can see from the `constructor`, the `name` and `symbol` of the token are dynamically generated based on the prover's `ID`.",
+      "file": "contracts/src/tokens/SuccinctProver.sol",
+      "highlight": [
+        {
+          "start": 60,
+          "end": 61
+        }
+      ],
+      "title": "",
+      "id": "55884"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/src/tokens/StakedSuccinct.sol"
+      ],
+      "description": "Finally, we have `StakedSuccinct.sol`, which defines the **$stPROVE** token.",
+      "title": "",
+      "id": "55885"
+    },
+    {
+      "type": "highlight",
+      "description": "`$stPROVE` is the **final ERC20 receipt token**. It represents a user's total staked position across all provers, providing a single token to track the value of all their staked `$PROVE`.",
+      "file": "contracts/src/tokens/StakedSuccinct.sol",
+      "highlight": [
+        {
+          "start": 15,
+          "end": 15
+        }
+      ],
+      "title": "",
+      "id": "55886"
+    },
+    {
+      "type": "textOnly",
+      "description": "A key feature of the wrapper tokens (`$iPROVE`, `$PROVER-N`, and `$stPROVE`) is that they have transfer restrictions. This is to ensure that they are only moved during official staking and unstaking operations, maintaining the integrity of the staking system. Let's look at an example from `IntermediateSuccinct.sol`.",
+      "title": "",
+      "id": "55887"
+    },
+    {
+      "type": "highlight",
+      "description": "The `_update` function in `IntermediateSuccinct.sol` is overridden to enforce these transfer restrictions. It only allows transfers to and from the staking contract or the `vapp` contract, otherwise it reverts with a `NonTransferable` error. Similar logic exists in the other wrapper token contracts.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 71,
+          "end": 88
+        }
+      ],
+      "title": "",
+      "id": "55888"
+    },
+    {
+      "type": "textOnly",
+      "description": "That concludes our high-level tour of the token contracts in the `succinct-network` codebase. You've been introduced to the four main tokens: **$PROVE**, **$iPROVE**, **$PROVER-N**, and **$stPROVE**, and have a basic understanding of their roles in the staking system.",
+      "title": "",
+      "id": "55889"
+    },
+    {
+      "type": "mcq",
+      "description": "Based on the token contracts reviewed, which statement accurately describes the asset wrapping hierarchy in the staking system?\n\nOptions:\n\n A). $PROVE is deposited directly into a `SuccinctProver` vault, and `$iPROVE` is issued as a separate rewards token.\n\nB). $PROVE is deposited into the `IntermediateSuccinct` vault to mint `$iPROVE`, which is then deposited into a `SuccinctProver` vault.\n\nC). $stPROVE is the initial asset, which is wrapped by `IntermediateSuccinct` and then `SuccinctProver`.\n\nD). $iPROVE is the base token, which is wrapped by the `Succinct` contract to create `$PROVE` for staking.\n\n\nCorrect: B). $PROVE is deposited into the `IntermediateSuccinct` vault to mint `$iPROVE`, which is then deposited into a `SuccinctProver` vault.\n\nExplanation: The correct sequence involves two layers of ERC-4626 vaults. First, users deposit the base `$PROVE` token into the `IntermediateSuccinct` contract to receive `$iPROVE`. Second, this `$iPROVE` is deposited into a specific `SuccinctProver` contract to receive a prover-specific delegation token (`$PROVER-N`). `$stPROVE` is a non-vault receipt token representing the total value staked.",
+      "title": "",
+      "id": "55900",
+      "text": "Based on the token contracts reviewed, which statement accurately describes the asset wrapping hierarchy in the staking system?",
+      "answers": [
+        "$PROVE is deposited directly into a `SuccinctProver` vault, and `$iPROVE` is issued as a separate rewards token.",
+        "$PROVE is deposited into the `IntermediateSuccinct` vault to mint `$iPROVE`, which is then deposited into a `SuccinctProver` vault.",
+        "$stPROVE is the initial asset, which is wrapped by `IntermediateSuccinct` and then `SuccinctProver`.",
+        "$iPROVE is the base token, which is wrapped by the `Succinct` contract to create `$PROVE` for staking."
+      ],
+      "correct": 1,
+      "explanation": "The correct sequence involves two layers of ERC-4626 vaults. First, users deposit the base `$PROVE` token into the `IntermediateSuccinct` contract to receive `$iPROVE`. Second, this `$iPROVE` is deposited into a specific `SuccinctProver` contract to receive a prover-specific delegation token (`$PROVER-N`). `$stPROVE` is a non-vault receipt token representing the total value staked."
+    }
+  ]
+}

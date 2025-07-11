@@ -1,0 +1,25 @@
+{
+  "packageName": "succinct-network",
+  "packageVersion": 1,
+  "hash": "77e038db6160e9a76b4bc86aa8ba3ed65e497732",
+  "numberOfTours": 6,
+  "titleOfTours": [
+    "1.1: Succinct Network: A High-Level Overview",
+    "2.1: Tokens: Overview",
+    "2.2: Succinct.sol: The $PROVE Token",
+    "2.3: IntermediateSuccinct.sol: The $iPROVE Vault",
+    "3.1: SuccinctGovernor: The Governance Contract",
+    "Want to learn more?"
+  ],
+  "totalNumberOfSteps": 52,
+  "filesCovered": [
+    "contracts/src/tokens/Succinct.sol",
+    "contracts/src/tokens/IntermediateSuccinct.sol",
+    "contracts/src/tokens/SuccinctProver.sol",
+    "contracts/src/tokens/StakedSuccinct.sol",
+    "contracts/src/SuccinctStaking.sol",
+    "contracts/src/libraries/ProverRegistry.sol",
+    "contracts/src/SuccinctGovernor.sol"
+  ],
+  "numberOfFilesCovered": 7
+}

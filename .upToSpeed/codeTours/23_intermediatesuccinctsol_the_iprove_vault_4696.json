@@ -1,0 +1,106 @@
+{
+  "title": "2.3: IntermediateSuccinct.sol: The $iPROVE Vault",
+  "id": "dwsyXZWQo8BU3ScZlAiuCdBHehNO6gEgayekPeWwUgI=",
+  "originalId": 4696,
+  "position": 4,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "This tour explores the `$iPROVE` token, the first layer of abstraction over the base `$PROVE` token. We'll understand its role as a non-transferable `ERC-4626` vault that serves as an intermediary receipt token in the Succinct staking system.",
+      "title": "",
+      "id": "57741"
+    },
+    {
+      "type": "highlight",
+      "description": "The `IntermediateSuccinct` contract is an **ERC-4626** vault. This standardized interface allows users to deposit `$PROVE` tokens and receive `$iPROVE` vault shares representing their proportional ownership of the deposited assets.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 27,
+          "end": 27
+        }
+      ],
+      "title": "",
+      "id": "57742"
+    },
+    {
+      "type": "highlight",
+      "description": "The constructor reveals how this vault operates: `_underlying` is the `$PROVE` token address, passed to the `ERC4626` constructor on line 33. This makes `$PROVE` the vault's underlying asset - when you deposit `$PROVE`, you receive `$iPROVE` shares. The `asset()` function returns the `$PROVE` token address.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 31,
+          "end": 37
+        }
+      ],
+      "title": "",
+      "id": "57743"
+    },
+    {
+      "type": "highlight",
+      "description": "Here's the critical `staking` state variable that holds the address of the main `SuccinctStaking` contract. This creates the permission system that controls which operations can be performed on **$iPROVE** tokens.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 29,
+          "end": 29
+        }
+      ],
+      "title": "",
+      "id": "57744"
+    },
+    {
+      "type": "textOnly",
+      "description": "The instructions mention an `onlyStaking` modifier and `setStaking` function, but this implementation uses a different approach. Instead of a reusable modifier, it uses direct authorization checks like `msg.sender != staking` within functions. The staking address is set once in the `constructor` and remains immutable for security.",
+      "title": "",
+      "id": "57745"
+    },
+    {
+      "type": "highlight",
+      "description": "The non-transferability mechanism uses the `_update` function instead of the older `_beforeTokenTransfer` hook mentioned in the instructions. This reflects newer `OpenZeppelin` versions. The function allows transfers only when: (1) they're staking operations by the staking contract or provers (lines 76-77), or (2) they're withdrawals by the vApp (lines 80-82). All other transfers are blocked.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 71,
+          "end": 91
+        }
+      ],
+      "title": "",
+      "id": "57746"
+    },
+    {
+      "type": "mcq",
+      "description": "Based on the logic in the `_update` function, what is the outcome if a standard **Externally Owned Account (EOA)** that holds `$iPROVE` attempts to transfer its tokens to another standard **EOA**?\n\nOptions:\n\n A). The transfer succeeds, as `$iPROVE` follows standard ERC20 transfer functionality.\n\nB). The transaction reverts because the `msg.sender` is not an authorized party (staking contract, prover, or vApp).\n\nC). The transfer succeeds only if the recipient is the zero address, effectively burning the tokens.\n\nD). The transaction reverts because only the `burn` function can be called to move tokens.\n\n\nCorrect: B). The transaction reverts because the `msg.sender` is not an authorized party (staking contract, prover, or vApp).\n\nExplanation: The correct answer is that the transaction reverts. The `_update` function (lines 71-91) overrides standard ERC20 behavior. It explicitly checks if the transaction is initiated by the staking contract, a registered prover, or the vApp. If `msg.sender` is none of these, the `NonTransferable()` error is thrown, blocking the transfer.",
+      "title": "",
+      "id": "57749",
+      "text": "Based on the logic in the `_update` function, what is the outcome if a standard **Externally Owned Account (EOA)** that holds `$iPROVE` attempts to transfer its tokens to another standard **EOA**?",
+      "answers": [
+        "The transfer succeeds, as `$iPROVE` follows standard ERC20 transfer functionality.",
+        "The transaction reverts because the `msg.sender` is not an authorized party (staking contract, prover, or vApp).",
+        "The transfer succeeds only if the recipient is the zero address, effectively burning the tokens.",
+        "The transaction reverts because only the `burn` function can be called to move tokens."
+      ],
+      "correct": 1,
+      "explanation": "The correct answer is that the transaction reverts. The `_update` function (lines 71-91) overrides standard ERC20 behavior. It explicitly checks if the transaction is initiated by the staking contract, a registered prover, or the vApp. If `msg.sender` is none of these, the `NonTransferable()` error is thrown, blocking the transfer."
+    },
+    {
+      "type": "highlight",
+      "description": "The external `burn` function demonstrates the access control pattern. Instead of using the `onlyStaking` modifier, it directly checks that the caller is the staking contract on lines 41-43. This function can only be called during unstaking. It burns both the `$iPROVE` shares (line 50) and the underlying `$PROVE` tokens (line 47), returning the amount of `$PROVE` burned.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 40,
+          "end": 53
+        }
+      ],
+      "title": "",
+      "id": "57747"
+    },
+    {
+      "type": "textOnly",
+      "description": "In summary, `$iPROVE` serves as a secure intermediate layer: users deposit `$PROVE` and receive non-transferable `$iPROVE` tokens as proof of their stake. These tokens can only move through authorized staking operations, ensuring system integrity. When unstaking, the staking contract burns the `$iPROVE` tokens and returns the underlying `$PROVE` tokens.",
+      "title": "",
+      "id": "57748"
+    }
+  ]
+}

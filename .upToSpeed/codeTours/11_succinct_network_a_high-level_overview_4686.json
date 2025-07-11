@@ -1,0 +1,171 @@
+{
+  "title": "1.1: Succinct Network: A High-Level Overview",
+  "id": "8R8EcS/DZeMi9vx5bmF23wvVuxB8yzGp58pzlAr/oVQ=",
+  "originalId": 4686,
+  "position": 1,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "This tour provides a high-level overview of the **Succinct Network** `codebase`. Your goal is to understand the main components and how they interact, forming a mental map of the system's architecture. We will briefly touch upon the **token hierarchy**, the **staking mechanism**, and the **governance system**.",
+      "title": "",
+      "id": "55949"
+    },
+    {
+      "type": "textOnly",
+      "description": "The entire system is built upon a four-layer token hierarchy. We'll start by introducing each token to understand their roles.",
+      "title": "",
+      "id": "55950"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the foundational **ERC20 token**, `$PROVE`, which is mintable and burnable by its owner. Notice the contract inherits from standard `OpenZeppelin` contracts and has a `mint` function restricted to the owner.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 25
+        }
+      ],
+      "title": "",
+      "id": "55951"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the first layer of wrapping. It's an `ERC-4626` vault that wraps `$PROVE` to create `$iPROVE`. Note how it extends `ERC4626` for vault functionality and `ERC20Votes` for governance participation. `$iPROVE` is non-transferable and used for governance voting.",
+      "file": "contracts/src/tokens/IntermediateSuccinct.sol",
+      "highlight": [
+        {
+          "start": 22,
+          "end": 37
+        }
+      ],
+      "title": "",
+      "id": "55952"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the second wrapping layer, where `$iPROVE` is deposited into prover-specific vaults to create `$PROVER-N` tokens. Each prover has its own vault with unique ID and fee structure. These tokens represent a user's delegation to a particular prover.",
+      "file": "contracts/src/tokens/SuccinctProver.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 40
+        }
+      ],
+      "title": "",
+      "id": "55953"
+    },
+    {
+      "type": "highlight",
+      "description": "This contract defines `$stPROVE`, the receipt token that stakers receive. It represents a user's total staked value across all provers and is also non-transferable outside of staking operations. The `stakingOperation` modifier ensures transfers only happen during staking/unstaking.",
+      "file": "contracts/src/tokens/StakedSuccinct.sol",
+      "highlight": [
+        {
+          "start": 9,
+          "end": 26
+        }
+      ],
+      "title": "",
+      "id": "55954"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the core of the network, managing all major operations: staking, unstaking, rewards, and slashing. The contract inherits from multiple components: `ProverRegistry` for prover management, `StakedSuccinct` for receipt tokens, and implements the main `staking interface`.",
+      "file": "contracts/src/SuccinctStaking.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 27
+        }
+      ],
+      "title": "",
+      "id": "55955"
+    },
+    {
+      "type": "highlight",
+      "description": "The `_stake` function orchestrates the entire token flow. It deposits `$PROVE` to mint `$iPROVE` (line 441), then deposits `$iPROVE` to mint `$PROVER-N` (line 448), and finally mints `$stPROVE` to the staker as a receipt (line 454). This demonstrates the complete wrapping hierarchy.",
+      "file": "contracts/src/SuccinctStaking.sol",
+      "highlight": [
+        {
+          "start": 413,
+          "end": 457
+        }
+      ],
+      "title": "",
+      "id": "55956"
+    },
+    {
+      "type": "highlight",
+      "description": "This `library` is responsible for creating and tracking all the `SuccinctProver` contracts. It maintains the registry of approved provers and ensures only legitimate prover contracts can participate in the network.",
+      "file": "contracts/src/libraries/ProverRegistry.sol",
+      "highlight": [
+        {
+          "start": 11,
+          "end": 16
+        }
+      ],
+      "title": "",
+      "id": "55957"
+    },
+    {
+      "type": "highlight",
+      "description": "The `createProver` function allows anyone to create new prover vaults with specified staker fee rates. It validates the fee doesn't exceed 100% (10000 basis points) and ensures one prover per owner address.",
+      "file": "contracts/src/libraries/ProverRegistry.sol",
+      "highlight": [
+        {
+          "start": 89,
+          "end": 99
+        }
+      ],
+      "title": "",
+      "id": "55958"
+    },
+    {
+      "type": "highlight",
+      "description": "This contract manages the proposal and voting process, inheriting from `OpenZeppelin's Governor contracts`. It provides standard governance functionality like voting delays, periods, and quorum requirements.",
+      "file": "contracts/src/SuccinctGovernor.sol",
+      "highlight": [
+        {
+          "start": 17,
+          "end": 28
+        }
+      ],
+      "title": "",
+      "id": "55959"
+    },
+    {
+      "type": "highlight",
+      "description": "The constructor takes `_iPROVE` as a parameter and passes it to `GovernorVotes`. This connects the governance system to the staking system - `$iPROVE` token holders can vote on proposals, creating a direct link between staking and governance participation.",
+      "file": "contracts/src/SuccinctGovernor.sol",
+      "highlight": [
+        {
+          "start": 29,
+          "end": 40
+        }
+      ],
+      "title": "",
+      "id": "55960"
+    },
+    {
+      "type": "mcq",
+      "description": "Based on the presented architecture, what is the primary reason for `SuccinctGovernor` using `$iPROVE` as the designated voting token?\n\nOptions:\n\n A). $stPROVE is a non-transferable receipt token and lacks the required `ERC20Votes` interface for governance.\n\nB). $PROVER-N` tokens would fragment voting power, as stake would be divided across multiple, separate prover contracts.\n\nC). $iPROVE` aggregates a user's total stake in the system and is equipped with the `ERC20Votes` interface for direct use by the governor.\n\nD). $PROVE` is a liquid token and using it for voting would not require users to lock capital within the staking protocol.\n\n\nCorrect: C). $iPROVE` aggregates a user's total stake in the system and is equipped with the `ERC20Votes` interface for direct use by the governor.\n\nExplanation: The correct answer is that `$iPROVE` is designed as the central governance token. It aggregates a user's total stake before delegation to a specific prover and, crucially, implements the `ERC20Votes` interface required by the `GovernorVotes` contract. While other options describe true aspects of the system (e.g., fragmentation with `$PROVER-N` or the role of `$PROVE`), they don't capture the primary architectural reason for selecting `$iPROVE` as the voting asset.",
+      "title": "",
+      "id": "55962",
+      "text": "Based on the presented architecture, what is the primary reason for `SuccinctGovernor` using `$iPROVE` as the designated voting token?",
+      "answers": [
+        "$stPROVE is a non-transferable receipt token and lacks the required `ERC20Votes` interface for governance.",
+        "$PROVER-N` tokens would fragment voting power, as stake would be divided across multiple, separate prover contracts.",
+        "$iPROVE` aggregates a user's total stake in the system and is equipped with the `ERC20Votes` interface for direct use by the governor.",
+        "$PROVE` is a liquid token and using it for voting would not require users to lock capital within the staking protocol."
+      ],
+      "correct": 2,
+      "explanation": "The correct answer is that `$iPROVE` is designed as the central governance token. It aggregates a user's total stake before delegation to a specific prover and, crucially, implements the `ERC20Votes` interface required by the `GovernorVotes` contract. While other options describe true aspects of the system (e.g., fragmentation with `$PROVER-N` or the role of `$PROVE`), they don't capture the primary architectural reason for selecting `$iPROVE` as the voting asset."
+    },
+    {
+      "type": "textOnly",
+      "description": "By the end of this tour, you should have a solid mental map of the Succinct Network's architecture: the four-layer token hierarchy (`$PROVE` → `$iPROVE` → `$PROVER-N` → `$stPROVE`), the **staking engine** that orchestrates token flows, the **prover registry** that manages delegation targets, and the **governance system** that gives `$iPROVE` holders voting power. This foundation will support the more detailed tours that follow.",
+      "title": "",
+      "id": "55961"
+    }
+  ]
+}

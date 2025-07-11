@@ -1,0 +1,108 @@
+{
+  "title": "2.2: Succinct.sol: The $PROVE Token",
+  "id": "+MsbQtDZd/qVXd2EbmZ8eF92Av/HJ5Tb1HLzNn2N3kQ=",
+  "originalId": 4690,
+  "position": 3,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "Welcome to our walkthrough of the **$PROVE** token implementation. While the instructions reference an `ERC20PresetMinterPauser` approach, we'll explore the actual implementation in the codebase, which demonstrates centralized control through a different mechanism.",
+      "title": "",
+      "id": "55963"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/src/tokens/Succinct.sol"
+      ],
+      "description": "Let's examine the actual `Succinct` contract implementation. This contract defines the `$PROVE` token, which serves as the primary token for the Succinct Prover Network.",
+      "title": "",
+      "id": "55964"
+    },
+    {
+      "type": "highlight",
+      "description": "The token is configured with the name `Succinct` and the symbol `PROVE`. These constants define the token's identity on the blockchain.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 12,
+          "end": 13
+        }
+      ],
+      "title": "",
+      "id": "55965"
+    },
+    {
+      "type": "highlight",
+      "description": "The `Succinct` contract inherits from a suite of OpenZeppelin contracts, providing standard `ERC20` functionality, gasless approvals (`ERC20Permit`), token burning (`ERC20Burnable`), and centralized owner control (`Ownable`).",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 18
+        }
+      ],
+      "title": "",
+      "id": "55966"
+    },
+    {
+      "type": "highlight",
+      "description": "The `constructor` initializes the token with its name and symbol, enables `permit` functionality, and sets the contract owner. The `_owner` parameter determines who will have administrative control over the token supply.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 19,
+          "end": 19
+        }
+      ],
+      "title": "",
+      "id": "55967"
+    },
+    {
+      "type": "highlight",
+      "description": "The `mint` function demonstrates the centralized control mechanism. Only the contract owner can create new `$PROVE` tokens, as enforced by the `onlyOwner` modifier. This makes the token supply fully controlled by a single address.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 22,
+          "end": 24
+        }
+      ],
+      "title": "",
+      "id": "55968"
+    },
+    {
+      "type": "mcq",
+      "description": "Based on the `Succinct.sol` contract, who is authorized to mint new **$PROVE** tokens?\n\nOptions:\n\n A). Any address that has been granted the `MINTER_ROLE`.\n\nB). Only the contract owner.\n\nC). Any address can call the `mint` function.\n\n\nCorrect: B). Only the contract owner.\n\nExplanation: The `mint` function is protected by the `onlyOwner` modifier, inherited from OpenZeppelin's `Ownable` contract. This ensures only the address set as the owner can create new tokens. The contract does not implement the role-based `AccessControl` pattern, so there is no `MINTER_ROLE`.",
+      "title": "",
+      "id": "55971",
+      "text": "Based on the `Succinct.sol` contract, who is authorized to mint new **$PROVE** tokens?",
+      "answers": [
+        "Any address that has been granted the `MINTER_ROLE`.",
+        "Only the contract owner.",
+        "Any address can call the `mint` function."
+      ],
+      "correct": 1,
+      "explanation": "The `mint` function is protected by the `onlyOwner` modifier, inherited from OpenZeppelin's `Ownable` contract. This ensures only the address set as the owner can create new tokens. The contract does not implement the role-based `AccessControl` pattern, so there is no `MINTER_ROLE`."
+    },
+    {
+      "type": "highlight",
+      "description": "Through the `ERC20Burnable` inheritance, the contract provides burning functionality. Token holders can destroy their own tokens using the `burn` function, or approved addresses can burn tokens on their behalf using `burnFrom`.",
+      "file": "contracts/src/tokens/Succinct.sol",
+      "highlight": [
+        {
+          "start": 6,
+          "end": 7
+        }
+      ],
+      "title": "",
+      "id": "55969"
+    },
+    {
+      "type": "textOnly",
+      "description": "In summary, the `$PROVE` token is a standard **ERC20 token** with centralized supply control. Unlike the role-based approach mentioned in the instructions (`ERC20PresetMinterPauser` with `MINTER_ROLE`, `PAUSER_ROLE`, and `DEFAULT_ADMIN_ROLE`), this implementation uses `OpenZeppelin`'s `Ownable` pattern for simpler, single-owner control.\n\nBoth approaches achieve the same fundamental goal: ensuring that token minting is restricted to authorized addresses, maintaining centralized control over the token supply.",
+      "title": "",
+      "id": "55970"
+    }
+  ]
+}
